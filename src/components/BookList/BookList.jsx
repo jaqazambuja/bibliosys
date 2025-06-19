@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
+import {
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
+  Button, TextField, Box, Typography, IconButton
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function BookList({ books, onEdit, onDelete }) {
-
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredBooks = books.filter(book =>
@@ -11,66 +16,64 @@ function BookList({ books, onEdit, onDelete }) {
   );
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-3xl font-bold text-center text-indigo-700 mb-8">
+    <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+      <Typography variant="h4" component="h2" align="center" gutterBottom sx={{ color: 'primary.main', mb: 4 }}>
         Livros Cadastrados
-      </h2>
+      </Typography>
 
-      {/*campo de busca */}
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Buscar por título, autor ou gênero..."
-          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+      <Box sx={{ mb: 4 }}>
+        <TextField
+          label="Buscar por título, autor ou gênero..."
+          variant="outlined"
+          fullWidth
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-      </div>
+      </Box>
 
       {filteredBooks.length === 0 ? (
-        <p className="text-center text-gray-600 text-lg">
+        <Typography variant="h6" align="center" sx={{ color: 'text.secondary', mt: 4 }}>
           Nenhum livro encontrado. Cadastre um novo livro ou ajuste sua busca.
-        </p>
+        </Typography>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <thead className="bg-indigo-500 text-white">
-              <tr>
-                <th className="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Título</th>
-                <th className="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Autor(a)</th>
-                <th className="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Gênero</th>
-                <th className="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Data Leitura</th>
-                <th className="py-3 px-4 text-center text-sm font-semibold uppercase tracking-wider">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
+        <TableContainer component={Paper} elevation={1}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead sx={{ backgroundColor: 'primary.dark' }}>
+              <TableRow>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Título</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Autor(a)</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Gênero</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Data Leitura</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Ações</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {filteredBooks.map((book) => (
-                <tr key={book.id} className="hover:bg-gray-50 transition duration-150 ease-in-out">
-                  <td className="py-3 px-4 text-gray-800">{book.title}</td>
-                  <td className="py-3 px-4 text-gray-800">{book.author}</td>
-                  <td className="py-3 px-4 text-gray-800">{book.genre}</td>
-                  <td className="py-3 px-4 text-gray-800">{book.readDate}</td>
-                  <td className="py-3 px-4 flex justify-center space-x-2">
-                    <button
-                      onClick={() => onEdit(book.id)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => onDelete(book.id)}
-                      className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400"
-                    >
-                      Excluir
-                    </button>
-                  </td>
-                </tr>
+                <TableRow
+                  key={book.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:nth-of-type(odd)': { backgroundColor: 'action.hover' } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {book.title}
+                  </TableCell>
+                  <TableCell>{book.author}</TableCell>
+                  <TableCell>{book.genre}</TableCell>
+                  <TableCell>{book.readDate ? book.readDate.split('T')[0] : ''}</TableCell>
+                  <TableCell align="center">
+                    <IconButton color="primary" onClick={() => onEdit(book.id)} aria-label="editar">
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton color="error" onClick={() => onDelete(book.id)} aria-label="excluir">
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
-    </div>
+    </Paper>
   );
 }
 
